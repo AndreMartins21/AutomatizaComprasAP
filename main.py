@@ -100,8 +100,8 @@ class AutomatizacaoRegistroCompras:
         self.df['andre_nao_quer'] = ""
         self.df['gilmar_nao_quer'] = ""
         self.df['kaleb_nao_quer'] = ""
-        self.df['qtd_interessados'] = ""
-        self.df['valor_por_interessado'] = ""
+        # self.df['qtd_interessados'] = ""
+        # self.df['valor_por_interessado'] = ""
         self.df['valor_so_andre'] = ""
         self.df['valor_so_gilmar'] = ""
         self.df['valor_so_kaleb'] = ""
@@ -114,17 +114,16 @@ class AutomatizacaoRegistroCompras:
 
     @staticmethod
     def _fill_formulas_in_worksheet(df: pd.DataFrame, ws: Worksheet):
+        qtd_interessados = "IF(ISBLANK(E2),1, 0)+IF(ISBLANK(F2),1, 0)+IF(ISBLANK(G2),1, 0)"
+        formula_valor_sobre_qtd_interessados = f"(D2/({qtd_interessados}))"
+
         map_column_formula: dict[str, str] = {
-            # qtd_interessados:
-            "H": "=IF(ISBLANK(E2),1, 0)+IF(ISBLANK(F2),1, 0)+IF(ISBLANK(G2),1, 0)",
-            # valor_por_interessado:
-            "I": "=D2/H2",
             # valor_so_andre:
-            "J": "=IF(ISBLANK(E2),1,0)*$I2",
+            "J": f"=IF(ISBLANK(E2),1,0)*{formula_valor_sobre_qtd_interessados}",
             # valor_so_gilmar:
-            "K": "=IF(ISBLANK(F2),1,0)*$I2",
+            "K": f"=IF(ISBLANK(F2),1,0)*{formula_valor_sobre_qtd_interessados}",
             # valor_so_kaleb:
-            "L": "=IF(ISBLANK(G2),1,0)*$I2"
+            "L": f"=IF(ISBLANK(G2),1,0)*{formula_valor_sobre_qtd_interessados}"
         }
         qtd_linhas = df.shape[0]
         init_row_values = 6
